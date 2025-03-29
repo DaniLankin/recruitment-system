@@ -32,7 +32,15 @@ router.post("/login", async (req, res) => {
     );
     
 
-    res.json({ token });
+    res.json({
+      token,
+      user: {
+        id: user.id,
+        email: user.email,
+        role: user.role
+      }
+    });
+    
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
