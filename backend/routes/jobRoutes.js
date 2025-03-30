@@ -95,4 +95,28 @@ router.delete("/jobs/:id", authMiddleware, requireRecruiter, async (req, res) =>
   }
 });
 
+router.get("/jobs/my-jobs", authMiddleware, async (req, res) => {
+  try {
+    if (req.user.role !== "recruiter") {
+      return res.status(403).json({ error: "גישה לא מורשית" });
+    }
+
+    const jobs = await prisma.job.findMany({
+      where: {
+        createdById: req.user.userId,
+      },
+      include: {
+        _count: {
+          select: { applications: true },
+        },
+      },
+    });
+
+    res.json(jobs);
+  } catch (err) {
+    console.error("שגיאה בקבלת משרות מגייס:", err);
+    res.status(500).json({ error: "שגיאה בשרת" });
+  }
+});
+
 module.exports = router;
