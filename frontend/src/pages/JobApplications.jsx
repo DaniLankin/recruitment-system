@@ -29,7 +29,32 @@ function JobApplications() {
 
     fetchApplications();
   }, [jobId]);
+  const updateStatus = async (applicationId, newStatus) => {
+    try {
+      const token = localStorage.getItem("token");
+      const res = await fetch(`http://localhost:5000/api/applications/${applicationId}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ status: newStatus }),
+      });
 
+      const data = await res.json();
+
+      if (!res.ok) throw new Error(data.error || "שגיאה בעדכון סטטוס");
+
+      // עדכון סטטוס ברשימה בלי ריפרוש
+      setApplications((prev) =>
+        prev.map((app) =>
+          app.id === applicationId ? { ...app, status: newStatus } : app
+        )
+      );
+    } catch (err) {
+      alert("שגיאה: " + err.message);
+    }
+  };
   return (
     <>
       <Navbar />
@@ -46,7 +71,27 @@ function JobApplications() {
               <div key={app.id} className="bg-white p-4 shadow rounded">
                 <p><strong>מועמד:</strong> {app.candidate?.name || "לא ידוע"}</p>
                 <p><strong>אימייל:</strong> {app.candidate?.email}</p>
+                <div className="mt-2 flex flex-wrap gap-2 items-center">
                 <p><strong>סטטוס:</strong> {app.status}</p>
+                <button
+                  onClick={() => updateStatus(app.id, "accepted")}
+                  className="bg-green-600 hover:bg-green-700 text-white px-3 py-1 rounded text-sm"
+                >
+                  קבל
+                </button>
+                <button
+                  onClick={() => updateStatus(app.id, "rejected")}
+                  className="bg-red-600 hover:bg-red-700 text-white px-3 py-1 rounded text-sm"
+                >
+                  דחה
+                </button>
+                <button
+                  onClick={() => updateStatus(app.id, "pending")}
+                  className="bg-gray-400 hover:bg-gray-500 text-white px-3 py-1 rounded text-sm"
+                >
+                  המתן
+                </button>
+              </div>
               </div>
             ))}
           </div>

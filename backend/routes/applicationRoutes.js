@@ -175,27 +175,32 @@ router.get("/stats", authMiddleware, async (req, res) => {
 });
 
 
-// 🛠️ עדכון סטטוס מועמדות (רק למשתמשים מחוברים)
-router.put("/applications/:id", authMiddleware, requireRecruiter, async (req, res) => {
-    const applicationId = parseInt(req.params.id);
+// PUT /api/applications/:id – עדכון סטטוס של הגשה
+router.put("/applications/:id", authMiddleware, async (req, res) => {
+  try {
+    if (req.user.role !== "recruiter") {
+      return res.status(403).json({ error: "גישה אסורה" });
+    }
+
+    const { id } = req.params;
     const { status } = req.body;
-  
-    const validStatuses = ["pending", "accepted", "rejected"];
-    if (!validStatuses.includes(status)) {
-      return res.status(400).json({ message: "Invalid status value" });
-    }
-  
-    try {
-      const updatedApplication = await prisma.application.update({
-        where: { id: applicationId },
-        data: { status },
-      });
-  
-      res.json(updatedApplication);
-    } catch (error) {
-      res.status(500).json({ error: error.message });
-    }
-  });
+
+    const updated = await prisma.application.update({
+      where: {
+        id: parseInt(id),
+      },
+      data: {
+        status,
+      },
+    });
+
+    res.json(updated);
+  } catch (err) {
+    console.error("שגיאה בעדכון סטטוס:", err);
+    res.status(500).json({ error: "שגיאה בעדכון סטטוס" });
+  }
+});
+
   
   
 
