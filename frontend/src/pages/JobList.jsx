@@ -37,23 +37,28 @@ function JobList() {
   
 
   useEffect(() => {
+    const token = localStorage.getItem("token");
+  
     const fetchJobs = async () => {
-      try {
-        const res = await fetch("http://localhost:5000/api/jobs");
-        const data = await res.json();
-
-        if (!res.ok) {
-          throw new Error(data.message || "שגיאה בטעינת משרות");
-        }
-
-        setJobs(data);
-      } catch (err) {
-        setError(err.message);
-      }
+      const res = await fetch("http://localhost:5000/api/jobs");
+      const data = await res.json();
+      setJobs(data);
     };
-
+  
+    const fetchApplications = async () => {
+      const res = await fetch("http://localhost:5000/api/applications/by-candidate", {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      const data = await res.json();
+      setApplications(data);
+    };
+  
     fetchJobs();
+    if (token) fetchApplications();
   }, []);
+  
 
   return (
     <div className="p-6">
@@ -75,12 +80,22 @@ function JobList() {
       שכר: {job.salaryRange || "לא צוין"}
     </p>
 
-    <button
-      onClick={() => applyToJob(job.id)}
-      className="mt-3 bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700"
-    >
-      הגש מועמדות
-    </button>
+    {applications.some((app) => app.jobId === job.id) ? (
+  <button
+    disabled
+    className="mt-3 bg-gray-400 text-white px-4 py-2 rounded cursor-not-allowed"
+  >
+    כבר הגשת
+  </button>
+) : (
+  <button
+    onClick={() => applyToJob(job.id)}
+    className="mt-3 bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700"
+  >
+    הגש מועמדות
+  </button>
+)}
+
   </div>
 ))}
 
