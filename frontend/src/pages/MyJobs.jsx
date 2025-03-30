@@ -1,5 +1,7 @@
 import { useEffect, useState } from "react";
 import Navbar from "../components/Navbar";
+import { Link } from "react-router-dom";
+
 
 function MyJobs() {
   const [jobs, setJobs] = useState([]);
@@ -44,6 +46,12 @@ function MyJobs() {
                 <h3 className="text-lg font-semibold">{job.title}</h3>
                 <p className="text-gray-600">{job.description}</p>
                 <p className="text-sm text-gray-500">מספר הגשות: {job._count?.applications || 0}</p>
+                <Link
+                  to={`/job-applications/${job.id}`}
+                  className="mt-2 inline-block bg-blue-600 text-white px-4 py-1 rounded hover:bg-blue-700"
+                >
+                  צפייה בהגשות
+                </Link>
               </div>
             ))}
           </div>

@@ -77,6 +77,35 @@ router.get("/applications/by-candidate", authMiddleware, async (req, res) => {
     res.status(500).json({ error: error.message }); // במקרה של שגיאה
   }
 });
+// ✅ קבלת הגשות לפי מזהה משרה
+router.get("/applications/by-job/:jobId", authMiddleware, async (req, res) => {
+  try {
+    if (req.user.role !== "recruiter") {
+      return res.status(403).json({ error: "גישה אסורה" });
+    }
+
+    const { jobId } = req.params;
+
+    const applications = await prisma.application.findMany({
+      where: {
+        jobId: parseInt(jobId),
+      },
+      include: {
+        candidate: {
+          select: {
+            name: true,
+            email: true,
+          },
+        },
+      },
+    });
+
+    res.json(applications);
+  } catch (err) {
+    console.error("שגיאה בשליפת ההגשות:", err);
+    res.status(500).json({ error: "שגיאה בשרת" });
+  }
+});
 
 // מגייס מקבל את כל המשרות שהוא פרסם, כולל ההגשות של מועמדים לכל משרה
 router.get("/by-recruiter", authMiddleware, async (req, res) => {
