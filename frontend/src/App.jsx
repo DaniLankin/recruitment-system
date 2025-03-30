@@ -1,4 +1,4 @@
-import './App.css'
+import './App.css';
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Login from "./pages/Login";
 import CandidateDashboard from "./pages/CandidateDashboard";
@@ -9,72 +9,67 @@ import MyApplications from "./pages/MyApplications";
 import MyJobs from "./pages/MyJobs";
 import JobApplications from "./pages/JobApplications";
 
-
-
-
-
 function App() {
   return (
     <Router>
       <Routes>
-  <Route path="/" element={<Login />} />
-  <Route
-    path="/candidate"
-    element={
-      <PrivateRoute>
-        <CandidateDashboard />
-      </PrivateRoute>
-    }
-  />
-  <Route
-  path="/job-applications/:jobId"
-  element={
-    <PrivateRoute>
-      <JobApplications />
-    </PrivateRoute>
-  }
-/>
-  <Route
-  path="/my-jobs"
-  element={
-    <PrivateRoute>
-      <MyJobs />
-    </PrivateRoute>
-  }
-/>
+        {/* 🔓 דף התחברות */}
+        <Route path="/" element={<Login />} />
 
-  <Route
-  path="/jobs"
-  element={
-    <PrivateRoute>
-      <JobList />
-    </PrivateRoute>
-  }
-  />
-  <Route
-  path="/my-applications"
-  element={
-    <PrivateRoute>
-      <MyApplications />
-    </PrivateRoute>
-  }
-  />
+        {/* 🧑‍💼 מגייסים */}
+        <Route
+          path="/recruiter"
+          element={
+            <PrivateRoute allowedRoles={["recruiter"]}>
+              <RecruiterDashboard />
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="/my-jobs"
+          element={
+            <PrivateRoute allowedRoles={["recruiter"]}>
+              <MyJobs />
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="/job-applications/:jobId"
+          element={
+            <PrivateRoute allowedRoles={["recruiter"]}>
+              <JobApplications />
+            </PrivateRoute>
+          }
+        />
 
-  <Route
-    path="/recruiter"
-    element={
-      <PrivateRoute>
-        <RecruiterDashboard />
-      </PrivateRoute>
-    }
-  />
-</Routes>
+        {/* 👨‍💻 מועמדים */}
+        <Route
+          path="/candidate"
+          element={
+            <PrivateRoute allowedRoles={["candidate"]}>
+              <CandidateDashboard />
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="/jobs"
+          element={
+            <PrivateRoute allowedRoles={["candidate"]}>
+              <JobList />
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="/my-applications"
+          element={
+            <PrivateRoute allowedRoles={["candidate"]}>
+              <MyApplications />
+            </PrivateRoute>
+          }
+        />
+      </Routes>
     </Router>
   );
 }
 
 export default App;
-
-
-//recruiter@example.com	recruiter123
-//candidate@example.com	candidate123
