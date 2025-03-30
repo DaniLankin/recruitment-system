@@ -82,6 +82,40 @@ router.get("/jobs/search", async (req, res) => {
   }
 });
 
+// ✏️ עדכון משרה קיימת
+router.put("/jobs/:id", authMiddleware, requireRecruiter, async (req, res) => {
+  const jobId = parseInt(req.params.id);
+  const { title, description, company, location, salaryRange } = req.body;
+
+  try {
+    // בדיקה שהמשרה שייכת למשתמש
+    const job = await prisma.job.findUnique({
+      where: { id: jobId },
+    });
+
+    if (!job || job.createdById !== req.user.userId) {
+      return res.status(403).json({ error: "אין הרשאה לערוך את המשרה הזו" });
+    }
+
+    // עדכון בפועל
+    const updatedJob = await prisma.job.update({
+      where: { id: jobId },
+      data: {
+        title,
+        description,
+        company,
+        location,
+        salaryRange,
+      },
+    });
+
+    res.json(updatedJob);
+  } catch (error) {
+    console.error("שגיאה בעדכון משרה:", error);
+    res.status(500).json({ error: "שגיאה בעדכון משרה" });
+  }
+});
+
 
 // 📌 מחיקת משרה (רק למשתמשים מחוברים)
 router.delete("/jobs/:id", authMiddleware, requireRecruiter, async (req, res) => {

@@ -103,6 +103,14 @@ function MyJobs() {
                       >
                         הגשות
                       </button>
+
+                      <button
+                        onClick={() => navigate(`/edit-job/${job.id}`)}
+                        className="bg-yellow-500 hover:bg-yellow-600 text-white px-3 py-1 rounded text-sm"
+                      >
+                        עריכה
+                      </button>
+
                       <button
                         onClick={() => handleDelete(job.id)}
                         className="bg-red-600 hover:bg-red-700 text-white px-3 py-1 rounded text-sm"
@@ -110,6 +118,7 @@ function MyJobs() {
                         מחיקה
                       </button>
                     </td>
+
                   </tr>
                 ))}
               </tbody>

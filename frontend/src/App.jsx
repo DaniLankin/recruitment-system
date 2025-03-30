@@ -8,6 +8,7 @@ import JobList from "./pages/JobList";
 import MyApplications from "./pages/MyApplications";
 import MyJobs from "./pages/MyJobs";
 import JobApplications from "./pages/JobApplications";
+import EditJob from "./pages/EditJob";
 
 function App() {
   return (
@@ -38,6 +39,14 @@ function App() {
           element={
             <PrivateRoute allowedRoles={["recruiter"]}>
               <JobApplications />
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="/edit-job/:id"
+          element={
+            <PrivateRoute allowedRoles={["recruiter"]}>
+              <EditJob />
             </PrivateRoute>
           }
         />
