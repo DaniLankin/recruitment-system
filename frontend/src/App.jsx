@@ -8,6 +8,8 @@ import CandidateDashboard from "./pages/CandidateDashboard";
 import RecruiterDashboard from "./pages/RecruiterDashboard";
 import PrivateRoute from "./components/PrivateRoute";
 import JobList from "./pages/JobList";
+import MyApplications from "./pages/MyApplications";
+
 
 
 
@@ -29,6 +31,14 @@ function App() {
   element={
     <PrivateRoute>
       <JobList />
+    </PrivateRoute>
+  }
+  />
+  <Route
+  path="/my-applications"
+  element={
+    <PrivateRoute>
+      <MyApplications />
     </PrivateRoute>
   }
   />

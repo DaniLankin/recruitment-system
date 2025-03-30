@@ -60,7 +60,7 @@ router.get("/applications", authMiddleware, requireRecruiter, async (req, res) =
 });
 
 // מועמד מקבל את כל המועמדויות שהוא הגיש, כולל פרטי המשרה
-router.get("/by-candidate", authMiddleware, async (req, res) => {
+router.get("/applications/by-candidate", authMiddleware, async (req, res) => {
   try {
     // מביא את כל ההגשות של המשתמש הנוכחי לפי ה־userId מתוך הטוקן
     const applications = await prisma.application.findMany({

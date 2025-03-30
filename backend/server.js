@@ -15,8 +15,8 @@ app.use(express.json());
 app.use("/api/auth", authRoutes); // 📌 חיבור הנתיבים
 app.use("/api", jobRoutes);
 app.use("/api", candidateRoutes);
-app.use("/api/applications", applicationRoutes);
-
+//app.use("/api/applications", applicationRoutes);
+app.use("/api", applicationRoutes);
 
 
 app.get("/", (req, res) => {

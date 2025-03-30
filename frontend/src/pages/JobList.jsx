@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 
 function JobList() {
   const [jobs, setJobs] = useState([]);
+  const [applications, setApplications] = useState([]);
   const [error, setError] = useState("");
   const applyToJob = async (jobId) => {
     const token = localStorage.getItem("token");
