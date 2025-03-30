@@ -1,4 +1,6 @@
 import { useEffect, useState } from "react";
+import Navbar from "../components/Navbar";
+
 
 function MyApplications() {
   const [applications, setApplications] = useState([]);
@@ -36,25 +38,29 @@ function MyApplications() {
   }, []);
 
   return (
-    <div className="p-6">
-      <h2 className="text-2xl font-bold mb-4 text-green-700">📥 ההגשות שלי</h2>
-
-      {error && <p className="text-red-500 mb-4">{error}</p>}
-
-      {applications.length === 0 ? (
-        <p>לא נמצאו הגשות.</p>
-      ) : (
-        <div className="space-y-4">
-          {applications.map((app) => (
-            <div key={app.id} className="bg-white p-4 shadow rounded">
-              <p className="text-lg font-semibold">{app.job?.title || "משרה לא ידועה"}</p>
-              <p className="text-gray-600">סטטוס: {app.status}</p>
-            </div>
-          ))}
-        </div>
-      )}
-    </div>
+    <>
+      <Navbar />
+      <div className="p-6">
+        <h2 className="text-2xl font-bold mb-4 text-green-700">📥 ההגשות שלי</h2>
+  
+        {error && <p className="text-red-500 mb-4">{error}</p>}
+  
+        {applications.length === 0 ? (
+          <p>לא נמצאו הגשות.</p>
+        ) : (
+          <div className="space-y-4">
+            {applications.map((app) => (
+              <div key={app.id} className="bg-white p-4 shadow rounded">
+                <p className="text-lg font-semibold">{app.job?.title || "משרה לא ידועה"}</p>
+                <p className="text-gray-600">סטטוס: {app.status}</p>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+    </>
   );
+  
 }
 
 export default MyApplications;

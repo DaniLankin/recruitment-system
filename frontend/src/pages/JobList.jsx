@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import Navbar from "../components/Navbar";
 
 function JobList() {
   const [jobs, setJobs] = useState([]);
@@ -61,48 +62,50 @@ function JobList() {
   
 
   return (
-    <div className="p-6">
-      <h2 className="text-2xl font-bold mb-4 text-blue-700">📄 רשימת משרות</h2>
-
-      {error && <p className="text-red-500 mb-4">{error}</p>}
-
-      {jobs.length === 0 && !error ? (
-        <p>אין משרות להצגה כרגע.</p>
-      ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {jobs.map((job) => (
-  <div key={job.id} className="bg-white p-4 shadow rounded">
-    <h3 className="text-xl font-semibold text-gray-800">{job.title}</h3>
-    <p className="text-gray-600">{job.company}</p>
-    <p className="text-gray-500">{job.location}</p>
-    <p className="mt-2 text-sm text-gray-700">{job.description}</p>
-    <p className="text-sm text-gray-500 mt-1">
-      שכר: {job.salaryRange || "לא צוין"}
-    </p>
-
-    {applications.some((app) => app.jobId === job.id) ? (
-  <button
-    disabled
-    className="mt-3 bg-gray-400 text-white px-4 py-2 rounded cursor-not-allowed"
-  >
-    כבר הגשת
-  </button>
-) : (
-  <button
-    onClick={() => applyToJob(job.id)}
-    className="mt-3 bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700"
-  >
-    הגש מועמדות
-  </button>
-)}
-
-  </div>
-))}
-
-        </div>
-      )}
-    </div>
+    <>
+      <Navbar />
+      <div className="p-6">
+        <h2 className="text-2xl font-bold mb-4 text-blue-700">📄 רשימת משרות</h2>
+  
+        {error && <p className="text-red-500 mb-4">{error}</p>}
+  
+        {jobs.length === 0 && !error ? (
+          <p>אין משרות להצגה כרגע.</p>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {jobs.map((job) => (
+              <div key={job.id} className="bg-white p-4 shadow rounded">
+                <h3 className="text-xl font-semibold text-gray-800">{job.title}</h3>
+                <p className="text-gray-600">{job.company}</p>
+                <p className="text-gray-500">{job.location}</p>
+                <p className="mt-2 text-sm text-gray-700">{job.description}</p>
+                <p className="text-sm text-gray-500 mt-1">
+                  שכר: {job.salaryRange || "לא צוין"}
+                </p>
+  
+                {applications.some((app) => app.jobId === job.id) ? (
+                  <button
+                    disabled
+                    className="mt-3 bg-gray-400 text-white px-4 py-2 rounded cursor-not-allowed"
+                  >
+                    כבר הגשת
+                  </button>
+                ) : (
+                  <button
+                    onClick={() => applyToJob(job.id)}
+                    className="mt-3 bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700"
+                  >
+                    הגש מועמדות
+                  </button>
+                )}
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+    </>
   );
+  
 }
 
 export default JobList;

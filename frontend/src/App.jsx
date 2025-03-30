@@ -1,6 +1,3 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
 import './App.css'
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Login from "./pages/Login";
@@ -9,6 +6,8 @@ import RecruiterDashboard from "./pages/RecruiterDashboard";
 import PrivateRoute from "./components/PrivateRoute";
 import JobList from "./pages/JobList";
 import MyApplications from "./pages/MyApplications";
+import MyJobs from "./pages/MyJobs";
+
 
 
 
@@ -26,6 +25,15 @@ function App() {
       </PrivateRoute>
     }
   />
+  <Route
+  path="/my-jobs"
+  element={
+    <PrivateRoute>
+      <MyJobs />
+    </PrivateRoute>
+  }
+/>
+
   <Route
   path="/jobs"
   element={
