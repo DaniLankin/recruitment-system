@@ -65,6 +65,14 @@ function MyJobs() {
 
       <div className="p-6">
         <h2 className="text-2xl font-bold mb-4 text-blue-700">📄 המשרות שלי</h2>
+        <div className="flex justify-end mb-4">
+          <button
+            onClick={() => navigate("/add-job")}
+            className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded shadow"
+          >
+            ➕ הוסף משרה
+          </button>
+        </div>
 
         {/* הודעת שגיאה במידת הצורך */}
         {error && <p className="text-red-500">{error}</p>}
