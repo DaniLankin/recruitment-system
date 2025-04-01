@@ -1,3 +1,5 @@
+//recruiter@example.com	recruiter123
+//candidate@example.com	candidate123
 # 📦 Recruitment System – מערכת ניהול גיוס והשמה
 
 מערכת Full Stack מלאה שפותחה לצורך ניהול תהליכי גיוס והשמה בין מגייסים למועמדים.  
