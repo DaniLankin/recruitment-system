@@ -38,7 +38,7 @@ router.post("/jobs", authMiddleware, requireRecruiter, async (req, res) => {
   }
 });
 
-// חיפוש משרות לפי מילה בתיאור, כותרת או מיקום
+// 🔍 חיפוש משרות לפי מילות מפתח (כותרת, תיאור, מיקום, חברה, שכר)
 router.get("/jobs/search", async (req, res) => {
   const { query } = req.query;
 
@@ -56,31 +56,11 @@ router.get("/jobs/search", async (req, res) => {
 
     res.json(jobs);
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    console.error("שגיאה בחיפוש:", error);
+    res.status(500).json({ error: "שגיאה בביצוע החיפוש" });
   }
 });
 
-// 🔍 חיפוש משרות לפי מילה (כותרת, תיאור, מיקום או שם חברה)
-router.get("/jobs/search", async (req, res) => {
-  const { query } = req.query;
-
-  try {
-    const jobs = await prisma.job.findMany({
-      where: {
-        OR: [
-          { title: { contains: query, mode: "insensitive" } },
-          { description: { contains: query, mode: "insensitive" } },
-          { location: { contains: query, mode: "insensitive" } },
-          { company: { contains: query, mode: "insensitive" } }
-        ]
-      }
-    });
-
-    res.json(jobs); // מחזיר את המשרות שתואמות לשאילתה
-  } catch (error) {
-    res.status(500).json({ error: error.message });
-  }
-});
 
 // ✏️ עדכון משרה קיימת
 router.put("/jobs/:id", authMiddleware, requireRecruiter, async (req, res) => {

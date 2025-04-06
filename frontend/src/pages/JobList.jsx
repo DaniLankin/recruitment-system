@@ -5,14 +5,16 @@ function JobList() {
   const [jobs, setJobs] = useState([]);
   const [applications, setApplications] = useState([]);
   const [error, setError] = useState("");
+  const [searchTerm, setSearchTerm] = useState("");
+
   const applyToJob = async (jobId) => {
     const token = localStorage.getItem("token");
-  
+
     if (!token) {
       alert("עליך להתחבר כדי להגיש מועמדות");
       return;
     }
-  
+
     try {
       const res = await fetch("http://localhost:5000/api/applications", {
         method: "POST",
@@ -22,53 +24,92 @@ function JobList() {
         },
         body: JSON.stringify({ jobId }),
       });
-  
+
       const data = await res.json();
-  
+
       if (!res.ok) {
         throw new Error(data.error || "שגיאה בהגשה");
       }
-  
+
       alert("ההגשה בוצעה בהצלחה ✅");
-  
     } catch (err) {
       alert(err.message);
     }
   };
-  
+
+  const fetchJobs = async () => {
+    const res = await fetch("http://localhost:5000/api/jobs");
+    const data = await res.json();
+    setJobs(data);
+  };
+
+  const fetchApplications = async () => {
+    const token = localStorage.getItem("token");
+
+    const res = await fetch("http://localhost:5000/api/applications/by-candidate", {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    const data = await res.json();
+    setApplications(data);
+  };
 
   useEffect(() => {
-    const token = localStorage.getItem("token");
-  
-    const fetchJobs = async () => {
-      const res = await fetch("http://localhost:5000/api/jobs");
-      const data = await res.json();
-      setJobs(data);
-    };
-  
-    const fetchApplications = async () => {
-      const res = await fetch("http://localhost:5000/api/applications/by-candidate", {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-      const data = await res.json();
-      setApplications(data);
-    };
-  
     fetchJobs();
+    const token = localStorage.getItem("token");
     if (token) fetchApplications();
   }, []);
-  
+
+  // חיפוש אוטומטי בזמן הקלדה (debounce)
+  useEffect(() => {
+    const delay = setTimeout(() => {
+      const searchJobs = async () => {
+        try {
+          if (!searchTerm.trim()) {
+            fetchJobs();
+            return;
+          }
+
+          const res = await fetch(
+            `http://localhost:5000/api/jobs/search?query=${encodeURIComponent(searchTerm)}`
+          );
+          const data = await res.json();
+
+          if (!res.ok) throw new Error(data.error || "שגיאה בחיפוש");
+
+          setJobs(data);
+        } catch (err) {
+          setError(err.message);
+        }
+      };
+
+      searchJobs();
+    }, 400); // ממתין 400ms
+
+    return () => clearTimeout(delay);
+  }, [searchTerm]);
 
   return (
     <>
       <Navbar />
+
       <div className="p-6">
         <h2 className="text-2xl font-bold mb-4 text-blue-700">📄 רשימת משרות</h2>
-  
+
+        {/* 🔍 שורת חיפוש */}
+        <div className="mb-4">
+          <input
+            type="text"
+            placeholder="חפש לפי תיאור, חברה, מיקום..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            className="border p-2 rounded w-full md:w-1/2"
+          />
+        </div>
+
         {error && <p className="text-red-500 mb-4">{error}</p>}
-  
+
         {jobs.length === 0 && !error ? (
           <p>אין משרות להצגה כרגע.</p>
         ) : (
@@ -82,7 +123,7 @@ function JobList() {
                 <p className="text-sm text-gray-500 mt-1">
                   שכר: {job.salaryRange || "לא צוין"}
                 </p>
-  
+
                 {applications.some((app) => app.jobId === job.id) ? (
                   <button
                     disabled
@@ -105,7 +146,6 @@ function JobList() {
       </div>
     </>
   );
-  
 }
 
 export default JobList;
