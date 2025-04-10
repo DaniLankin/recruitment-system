@@ -6,8 +6,18 @@ function JobList() {
   const [applications, setApplications] = useState([]);
   const [error, setError] = useState("");
   const [searchTerm, setSearchTerm] = useState("");
+  const [resumeFiles, setResumeFiles] = useState({}); // קבצים לפי מזהה משרה
 
-  const applyToJob = async (jobId) => {
+  // ✅ שינוי קובץ לפי משרה
+  const handleFileChange = (jobId, file) => {
+    setResumeFiles((prev) => ({
+      ...prev,
+      [jobId]: file,
+    }));
+  };
+
+  // ✅ שליחת מועמדות
+  const applyToJob = async (jobId, resumeFile) => {
     const token = localStorage.getItem("token");
 
     if (!token) {
@@ -15,26 +25,38 @@ function JobList() {
       return;
     }
 
+    if (!resumeFile || resumeFile.type !== "application/pdf") {
+      alert("אנא העלה קובץ PDF בלבד");
+      return;
+    }
+
     try {
+      const formData = new FormData();
+      formData.append("jobId", jobId);
+      formData.append("resume", resumeFile);
+
       const res = await fetch("http://localhost:5000/api/applications", {
         method: "POST",
         headers: {
-          "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify({ jobId }),
+        body: formData,
       });
 
       const data = await res.json();
-
-      if (!res.ok) {
-        throw new Error(data.error || "שגיאה בהגשה");
-      }
+      if (!res.ok) throw new Error(data.error || "שגיאה בהגשה");
 
       alert("ההגשה בוצעה בהצלחה ✅");
+      fetchApplications(); // רענון
     } catch (err) {
       alert(err.message);
     }
+  };
+
+  // ✅ קריאה מתוך המערך לאחר שינוי קובץ
+  const handleApplyClick = (jobId) => {
+    const file = resumeFiles[jobId];
+    applyToJob(jobId, file);
   };
 
   const fetchJobs = async () => {
@@ -55,13 +77,7 @@ function JobList() {
     setApplications(data);
   };
 
-  useEffect(() => {
-    fetchJobs();
-    const token = localStorage.getItem("token");
-    if (token) fetchApplications();
-  }, []);
-
-  // חיפוש אוטומטי בזמן הקלדה (debounce)
+  // חיפוש אוטומטי
   useEffect(() => {
     const delay = setTimeout(() => {
       const searchJobs = async () => {
@@ -75,7 +91,6 @@ function JobList() {
             `http://localhost:5000/api/jobs/search?query=${encodeURIComponent(searchTerm)}`
           );
           const data = await res.json();
-
           if (!res.ok) throw new Error(data.error || "שגיאה בחיפוש");
 
           setJobs(data);
@@ -85,10 +100,16 @@ function JobList() {
       };
 
       searchJobs();
-    }, 400); // ממתין 400ms
+    }, 400);
 
     return () => clearTimeout(delay);
   }, [searchTerm]);
+
+  useEffect(() => {
+    fetchJobs();
+    const token = localStorage.getItem("token");
+    if (token) fetchApplications();
+  }, []);
 
   return (
     <>
@@ -124,6 +145,7 @@ function JobList() {
                   שכר: {job.salaryRange || "לא צוין"}
                 </p>
 
+                {/* 🟡 כפתור לפי מצב */}
                 {applications.some((app) => app.jobId === job.id) ? (
                   <button
                     disabled
@@ -132,12 +154,20 @@ function JobList() {
                     כבר הגשת
                   </button>
                 ) : (
-                  <button
-                    onClick={() => applyToJob(job.id)}
-                    className="mt-3 bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700"
-                  >
-                    הגש מועמדות
-                  </button>
+                  <>
+                    <input
+                      type="file"
+                      accept=".pdf"
+                      onChange={(e) => handleFileChange(job.id, e.target.files[0])}
+                      className="block mb-2"
+                    />
+                    <button
+                      onClick={() => handleApplyClick(job.id)}
+                      className="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700"
+                    >
+                      הגש מועמדות
+                    </button>
+                  </>
                 )}
               </div>
             ))}

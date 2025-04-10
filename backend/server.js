@@ -1,12 +1,13 @@
 require("dotenv").config();
 const express = require("express");
 const cors = require("cors");
-const prisma = require("./config/db"); // 📌 חיבור למסד הנתונים
+//const prisma = require("./config/db"); // 📌 חיבור למסד הנתונים
 const authRoutes = require("./routes/authRoutes");
 const jobRoutes = require("./routes/jobRoutes");
 const candidateRoutes = require("./routes/candidateRoutes");
 const applicationRoutes = require("./routes/applicationRoutes");
 const recruiterRoutes = require("./routes/recruiterRoutes");
+const path = require("path");
 
 const app = express();
 app.use(cors());
@@ -17,6 +18,8 @@ app.use("/api", jobRoutes);
 app.use("/api", candidateRoutes);
 app.use("/api", applicationRoutes);
 app.use("/api/recruiter", recruiterRoutes);
+// סטטי – כדי שתוכל לגשת לקבצים מהדפדפן
+app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
 
 app.get("/", (req, res) => {

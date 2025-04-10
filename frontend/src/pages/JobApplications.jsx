@@ -100,6 +100,19 @@ function JobApplications() {
               <div key={app.id} className="bg-white p-4 shadow rounded">
                 <p><strong>מועמד:</strong> {app.candidate?.name || "לא ידוע"}</p>
                 <p><strong>אימייל:</strong> {app.candidate?.email}</p>
+
+                {/* ✅ צפייה בקובץ קורות חיים (אם קיים) */}
+                {app.resume && (
+                  <a
+                    href={`http://localhost:5000/uploads/${app.resume}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-blue-600 underline block mt-1"
+                  >
+                    📄 צפייה בקובץ קורות חיים
+                  </a>
+                )}
+
                 <div className="mt-2 flex flex-wrap gap-2 items-center">
                   <p><strong>סטטוס:</strong> {app.status}</p>
                   <button

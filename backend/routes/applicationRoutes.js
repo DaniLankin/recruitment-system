@@ -1,89 +1,84 @@
 const express = require("express");
 const prisma = require("../config/db");
 const authMiddleware = require("../middleware/authMiddleware");
-const requireRecruiter = require("../middleware/requireRecruiter"); 
-
-
+const requireRecruiter = require("../middleware/requireRecruiter");
+const requireCandidate = require("../middleware/requireCandidate");
+const upload = require("../middleware/uploadResume");
 
 const router = express.Router();
 
-// 📥 הגשת מועמדות למשרה
-router.post("/applications", authMiddleware, async (req, res) => {
-    console.log("👉 Token payload:", req.user);
-
+// 📥 הגשת מועמדות למשרה עם קובץ PDF
+router.post(
+  "/applications",
+  authMiddleware,
+  requireCandidate,
+  upload.single("resume"),
+  async (req, res) => {
     const { jobId } = req.body;
-  
+
     try {
-      // בדיקה אם ההגשה כבר קיימת
-      const existingApplication = await prisma.application.findFirst({
+      const existing = await prisma.application.findFirst({
         where: {
-          jobId,
+          jobId: parseInt(jobId),
           candidateId: req.user.userId,
         },
       });
-  
-      if (existingApplication) {
-        return res.status(400).json({
-          message: "You have already applied to this job.",
-        });
+
+      if (existing) {
+        return res.status(400).json({ error: "כבר הגשת מועמדות למשרה זו" });
       }
-  
-      // יצירת ההגשה
+
       const newApplication = await prisma.application.create({
         data: {
-          jobId,
+          jobId: parseInt(jobId),
           candidateId: req.user.userId,
           status: "pending",
+          resume: req.file?.filename || null,
         },
       });
-  
+
       res.status(201).json(newApplication);
     } catch (error) {
       res.status(500).json({ error: error.message });
     }
-  });
+  }
+);
 
-// 📄 קבלת כל ההגשות (כולל פרטי מועמד ומשרה)
+// 📄 קבלת כל ההגשות (מגייס)
 router.get("/applications", authMiddleware, requireRecruiter, async (req, res) => {
   try {
     const applications = await prisma.application.findMany({
       include: {
         candidate: true,
-        job: true
-      }
+        job: true,
+      },
     });
-
     res.json(applications);
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
 });
 
-// מועמד מקבל את כל המועמדויות שהוא הגיש, כולל פרטי המשרה
-router.get("/applications/by-candidate", authMiddleware, async (req, res) => {
+// 👤 קבלת הגשות של מועמד מחובר
+router.get("/applications/by-candidate", authMiddleware, requireCandidate, async (req, res) => {
   try {
-    // מביא את כל ההגשות של המשתמש הנוכחי לפי ה־userId מתוך הטוקן
     const applications = await prisma.application.findMany({
       where: {
-        candidateId: req.user.userId
+        candidateId: req.user.userId,
       },
       include: {
-        job: true // מצרף גם את פרטי המשרה לכל הגשה
-      }
+        job: true,
+      },
     });
-
-    res.json(applications); // מחזיר את ההגשות למועמד
+    res.json(applications);
   } catch (error) {
-    res.status(500).json({ error: error.message }); // במקרה של שגיאה
+    res.status(500).json({ error: error.message });
   }
 });
-// ✅ קבלת הגשות לפי מזהה משרה
-router.get("/applications/by-job/:jobId", authMiddleware, async (req, res) => {
-  try {
-    if (req.user.role !== "recruiter") {
-      return res.status(403).json({ error: "גישה אסורה" });
-    }
 
+// 📌 קבלת הגשות לפי מזהה משרה (למגייס)
+router.get("/applications/by-job/:jobId", authMiddleware, requireRecruiter, async (req, res) => {
+  try {
     const { jobId } = req.params;
 
     const applications = await prisma.application.findMany({
@@ -102,59 +97,46 @@ router.get("/applications/by-job/:jobId", authMiddleware, async (req, res) => {
 
     res.json(applications);
   } catch (err) {
-    console.error("שגיאה בשליפת ההגשות:", err);
     res.status(500).json({ error: "שגיאה בשרת" });
   }
 });
 
-// מגייס מקבל את כל המשרות שהוא פרסם, כולל ההגשות של מועמדים לכל משרה
-router.get("/by-recruiter", authMiddleware, async (req, res) => {
+// 🔢 קבלת משרות מגייס כולל ההגשות
+router.get("/by-recruiter", authMiddleware, requireRecruiter, async (req, res) => {
   try {
-    // מביא את כל המשרות שנוצרו ע"י המגייס הנוכחי
     const jobs = await prisma.job.findMany({
       where: {
-        createdById: req.user.userId
+        createdById: req.user.userId,
       },
       include: {
         applications: {
           include: {
-            candidate: true // מצרף את פרטי המועמד לכל הגשה
-          }
-        }
-      }
+            candidate: true,
+          },
+        },
+      },
     });
-
-    res.json(jobs); // מחזיר את רשימת המשרות + ההגשות שלהן
+    res.json(jobs);
   } catch (error) {
-    res.status(500).json({ error: error.message }); // במקרה של שגיאה
+    res.status(500).json({ error: error.message });
   }
 });
 
-// 📊 מגייס - סטטיסטיקת מועמדויות לפי סטטוס (רק על משרות שהוא פרסם)
-router.get("/stats", authMiddleware, async (req, res) => {
+// 📊 סטטיסטיקת סטטוסים למגייס
+router.get("/stats", authMiddleware, requireRecruiter, async (req, res) => {
   try {
-    // מביא את כל המשרות של המגייס הנוכחי
     const jobs = await prisma.job.findMany({
       where: {
-        createdById: req.user.userId
+        createdById: req.user.userId,
       },
-      select: {
-        id: true
-      }
+      select: { id: true },
     });
 
     const jobIds = jobs.map((job) => job.id);
-
-    // אם אין לו משרות בכלל
     if (jobIds.length === 0) {
-      return res.json({
-        pending: 0,
-        accepted: 0,
-        rejected: 0
-      });
+      return res.json({ pending: 0, accepted: 0, rejected: 0 });
     }
 
-    // סופר את כמות ההגשות לכל סטטוס
     const statuses = ["pending", "accepted", "rejected"];
     const counts = {};
 
@@ -162,8 +144,8 @@ router.get("/stats", authMiddleware, async (req, res) => {
       const count = await prisma.application.count({
         where: {
           jobId: { in: jobIds },
-          status: status
-        }
+          status,
+        },
       });
       counts[status] = count;
     }
@@ -174,14 +156,9 @@ router.get("/stats", authMiddleware, async (req, res) => {
   }
 });
 
-
-// PUT /api/applications/:id – עדכון סטטוס של הגשה
-router.put("/applications/:id", authMiddleware, async (req, res) => {
+// 📝 עדכון סטטוס של מועמדות
+router.put("/applications/:id", authMiddleware, requireRecruiter, async (req, res) => {
   try {
-    if (req.user.role !== "recruiter") {
-      return res.status(403).json({ error: "גישה אסורה" });
-    }
-
     const { id } = req.params;
     const { status } = req.body;
 
@@ -196,13 +173,8 @@ router.put("/applications/:id", authMiddleware, async (req, res) => {
 
     res.json(updated);
   } catch (err) {
-    console.error("שגיאה בעדכון סטטוס:", err);
     res.status(500).json({ error: "שגיאה בעדכון סטטוס" });
   }
 });
 
-  
-  
-
 module.exports = router;
-
