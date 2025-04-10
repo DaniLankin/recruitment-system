@@ -19,9 +19,7 @@ function JobApplications() {
         });
 
         const data = await res.json();
-
         if (!res.ok) throw new Error(data.error || "שגיאה בשליפת הגשות");
-
         setApplications(data);
       } catch (err) {
         setError(err.message);
@@ -44,7 +42,6 @@ function JobApplications() {
       });
 
       const data = await res.json();
-
       if (!res.ok) throw new Error(data.error || "שגיאה בעדכון סטטוס");
 
       setApplications((prev) =>
@@ -59,9 +56,33 @@ function JobApplications() {
     }
   };
 
-  const filteredApps = filter === "all"
-    ? applications
-    : applications.filter((app) => app.status === filter);
+  const handleDelete = async (applicationId) => {
+    const confirmDelete = window.confirm("האם אתה בטוח שברצונך להסיר את המועמדות?");
+    if (!confirmDelete) return;
+
+    try {
+      const token = localStorage.getItem("token");
+      const res = await fetch(`http://localhost:5000/api/applications/${applicationId}`, {
+        method: "DELETE",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || "שגיאה במחיקה");
+
+      setApplications((prev) => prev.filter((app) => app.id !== applicationId));
+      alert("המועמדות הוסרה בהצלחה ✅");
+    } catch (err) {
+      alert("שגיאה: " + err.message);
+    }
+  };
+
+  const filteredApps =
+    filter === "all"
+      ? applications
+      : applications.filter((app) => app.status === filter);
 
   return (
     <>
@@ -98,40 +119,58 @@ function JobApplications() {
           <div className="space-y-4">
             {filteredApps.map((app) => (
               <div key={app.id} className="bg-white p-4 shadow rounded">
-                <p><strong>מועמד:</strong> {app.candidate?.name || "לא ידוע"}</p>
-                <p><strong>אימייל:</strong> {app.candidate?.email}</p>
+                <p>
+                  <strong>מועמד:</strong> {app.candidate?.name || "לא ידוע"}
+                </p>
+                <p>
+                  <strong>אימייל:</strong> {app.candidate?.email}
+                </p>
 
-                {/* ✅ צפייה בקובץ קורות חיים (אם קיים) */}
                 {app.resume && (
-                  <a
-                    href={`http://localhost:5000/uploads/${app.resume}`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-blue-600 underline block mt-1"
-                  >
-                    📄 צפייה בקובץ קורות חיים
-                  </a>
+                  <p className="mt-2">
+                    <strong>קורות חיים:</strong>{" "}
+                    <a
+                      href={`http://localhost:5000/uploads/${app.resume}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-blue-600 underline"
+                    >
+                      לצפייה
+                    </a>
+                  </p>
                 )}
 
-                <div className="mt-2 flex flex-wrap gap-2 items-center">
-                  <p><strong>סטטוס:</strong> {app.status}</p>
+                <div className="mt-3 flex flex-wrap gap-2 items-center">
+                  <p>
+                    <strong>סטטוס:</strong> {app.status}
+                  </p>
+
                   <button
                     onClick={() => updateStatus(app.id, "accepted")}
                     className="bg-green-600 hover:bg-green-700 text-white px-3 py-1 rounded text-sm"
                   >
                     קבל
                   </button>
+
                   <button
                     onClick={() => updateStatus(app.id, "rejected")}
                     className="bg-red-600 hover:bg-red-700 text-white px-3 py-1 rounded text-sm"
                   >
                     דחה
                   </button>
+
                   <button
                     onClick={() => updateStatus(app.id, "pending")}
                     className="bg-gray-500 hover:bg-gray-600 text-white px-3 py-1 rounded text-sm"
                   >
                     המתן
+                  </button>
+
+                  <button
+                    onClick={() => handleDelete(app.id)}
+                    className="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded text-sm"
+                  >
+                    הסר מועמדות
                   </button>
                 </div>
               </div>
