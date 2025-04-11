@@ -14,14 +14,14 @@ function AdminDashboard() {
     const token = localStorage.getItem("token");
 
     try {
-      const statsRes = await fetch("http://localhost:5000/api/admin/stats", {
+      const statsRes = await fetch(`${import.meta.env.VITE_API_URL}/api/admin/stats`, {
         headers: { Authorization: `Bearer ${token}` },
       });
 
       const statsData = await statsRes.json();
       if (!statsRes.ok) throw new Error(statsData.error || "שגיאה בסטטיסטיקות");
 
-      const usersRes = await fetch("http://localhost:5000/api/admin/users", {
+      const usersRes = await fetch(`${import.meta.env.VITE_API_URL}/api/admin/users`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       const usersData = await usersRes.json();
@@ -41,7 +41,7 @@ function AdminDashboard() {
     const token = localStorage.getItem("token");
 
     try {
-      const res = await fetch(`http://localhost:5000/api/admin/users/${userId}`, {
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/api/admin/users/${userId}`, {
         method: "DELETE",
         headers: {
           Authorization: `Bearer ${token}`,
@@ -62,7 +62,7 @@ function AdminDashboard() {
     const token = localStorage.getItem("token");
   
     try {
-      const res = await fetch(`http://localhost:5000/api/admin/users/${userId}/role`, {
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/api/admin/users/${userId}/role`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",

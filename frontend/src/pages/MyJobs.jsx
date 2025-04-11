@@ -12,7 +12,7 @@ function MyJobs() {
     const fetchJobs = async () => {
       try {
         const token = localStorage.getItem("token");  // טוקן למעבר אימות
-        const res = await fetch("http://localhost:5000/api/jobs/my-jobs", {
+        const res = await fetch(`${import.meta.env.VITE_API_URL}/api/jobs/my-jobs`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },
@@ -42,7 +42,7 @@ function MyJobs() {
 
     try {
       const token = localStorage.getItem("token");
-      const res = await fetch(`http://localhost:5000/api/jobs/${jobId}`, {
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/api/jobs/${jobId}`, {
         method: "DELETE",
         headers: {
           Authorization: `Bearer ${token}`,

@@ -12,7 +12,7 @@ function JobApplications() {
     const fetchApplications = async () => {
       try {
         const token = localStorage.getItem("token");
-        const res = await fetch(`http://localhost:5000/api/applications/by-job/${jobId}`, {
+        const res = await fetch(`${import.meta.env.VITE_API_URL}/api/applications/by-job/${jobId}`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },
@@ -34,7 +34,7 @@ function JobApplications() {
   const updateStatus = async (applicationId, newStatus) => {
     try {
       const token = localStorage.getItem("token");
-      const res = await fetch(`http://localhost:5000/api/applications/${applicationId}`, {
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/api/applications/${applicationId}`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
@@ -65,7 +65,7 @@ function JobApplications() {
 
     try {
       const token = localStorage.getItem("token");
-      const res = await fetch(`http://localhost:5000/api/applications/${applicationId}`, {
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/api/applications/${applicationId}`, {
         method: "DELETE",
         headers: {
           Authorization: `Bearer ${token}`,
@@ -128,7 +128,7 @@ function JobApplications() {
                   <p>
                     <strong>קורות חיים:</strong>{" "}
                     <a
-                      href={`http://localhost:5000/uploads/${app.resume}`}
+                      href={`${import.meta.env.VITE_API_URL}/uploads/${app.resume}`} 
                       target="_blank"
                       rel="noopener noreferrer"
                       className="text-blue-600 underline"

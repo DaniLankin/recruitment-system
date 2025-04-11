@@ -9,7 +9,7 @@ function RecruiterDashboard() {
     const fetchDashboard = async () => {
       try {
         const token = localStorage.getItem("token");
-        const res = await fetch("http://localhost:5000/api/recruiter/dashboard", {
+        const res = await fetch(`${import.meta.env.VITE_API_URL}/api/recruiter/dashboard`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },

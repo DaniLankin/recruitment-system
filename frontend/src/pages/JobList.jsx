@@ -35,7 +35,7 @@ function JobList() {
       formData.append("jobId", jobId);
       formData.append("resume", resumeFile);
 
-      const res = await fetch("http://localhost:5000/api/applications", {
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/api/applications`, {
         method: "POST",
         headers: {
           Authorization: `Bearer ${token}`,
@@ -59,7 +59,7 @@ function JobList() {
   };
 
   const fetchJobs = async () => {
-    const res = await fetch("http://localhost:5000/api/jobs");
+    const res = await fetch(`${import.meta.env.VITE_API_URL}/api/jobs`);
     const data = await res.json();
     setJobs(data);
   };
@@ -67,7 +67,7 @@ function JobList() {
   const fetchApplications = async () => {
     const token = localStorage.getItem("token");
 
-    const res = await fetch("http://localhost:5000/api/applications/by-candidate", {
+    const res = await fetch(`${import.meta.env.VITE_API_URL}/api/applications/by-candidate`, {
       headers: {
         Authorization: `Bearer ${token}`,
       },
@@ -87,7 +87,7 @@ function JobList() {
           }
 
           const res = await fetch(
-            `http://localhost:5000/api/jobs/search?query=${encodeURIComponent(searchTerm)}`
+            `${import.meta.env.VITE_API_URL}/api/jobs/search?query=${encodeURIComponent(searchTerm)}`
           );
           const data = await res.json();
           if (!res.ok) throw new Error(data.error || "שגיאה בחיפוש");
