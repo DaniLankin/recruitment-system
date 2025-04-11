@@ -1,9 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
-
-console.log("Login component loaded");
-
 function Login() {
   const navigate = useNavigate();
   const [email, setEmail] = useState("");
@@ -30,28 +27,29 @@ function Login() {
         return;
       }
 
-      // שמירת הטוקן והנתונים
+      // שמירת הטוקן והמשתמש בלוקל סטורג'
       localStorage.setItem("token", data.token);
       localStorage.setItem("user", JSON.stringify(data.user));
 
-      // ניווט (לפי תפקיד)
+      // ניווט לפי תפקיד
       alert("Login successful!");
       if (data.user.role === "candidate") {
         navigate("/candidate");
       } else if (data.user.role === "recruiter") {
         navigate("/recruiter");
+      } else if (data.user.role === "admin") {
+        navigate("/admin"); // ✅ ניווט לאדמין
       }
-
     } catch (err) {
       setError("Network error");
     }
   };
 
   return (
-    
     <div className="min-h-screen flex items-center justify-center bg-gray-100">
       <form onSubmit={handleLogin} className="bg-white p-6 rounded shadow-md w-80">
         <h2 className="text-2xl font-bold mb-4 text-center text-blue-600">התחברות</h2>
+
         <input
           type="email"
           placeholder="אימייל"

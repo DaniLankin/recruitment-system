@@ -16,7 +16,7 @@ function JobList() {
     }));
   };
 
-  // ✅ שליחת מועמדות
+  // ✅ שליחת מועמדות עם קובץ PDF
   const applyToJob = async (jobId, resumeFile) => {
     const token = localStorage.getItem("token");
 
@@ -47,13 +47,12 @@ function JobList() {
       if (!res.ok) throw new Error(data.error || "שגיאה בהגשה");
 
       alert("ההגשה בוצעה בהצלחה ✅");
-      fetchApplications(); // רענון
+      fetchApplications(); // רענון ההגשות
     } catch (err) {
       alert(err.message);
     }
   };
 
-  // ✅ קריאה מתוך המערך לאחר שינוי קובץ
   const handleApplyClick = (jobId) => {
     const file = resumeFiles[jobId];
     applyToJob(jobId, file);
@@ -77,7 +76,7 @@ function JobList() {
     setApplications(data);
   };
 
-  // חיפוש אוטומטי
+  // ✅ חיפוש אוטומטי עם debounce
   useEffect(() => {
     const delay = setTimeout(() => {
       const searchJobs = async () => {
@@ -118,7 +117,7 @@ function JobList() {
       <div className="p-6">
         <h2 className="text-2xl font-bold mb-4 text-blue-700">📄 רשימת משרות</h2>
 
-        {/* 🔍 שורת חיפוש */}
+        {/* 🔍 חיפוש */}
         <div className="mb-4">
           <input
             type="text"
@@ -145,7 +144,6 @@ function JobList() {
                   שכר: {job.salaryRange || "לא צוין"}
                 </p>
 
-                {/* 🟡 כפתור לפי מצב */}
                 {applications.some((app) => app.jobId === job.id) ? (
                   <button
                     disabled

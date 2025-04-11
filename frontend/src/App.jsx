@@ -10,6 +10,7 @@ import MyJobs from "./pages/MyJobs";
 import JobApplications from "./pages/JobApplications";
 import EditJob from "./pages/EditJob";
 import AddJob from "./pages/AddJob";
+import AdminDashboard from "./pages/AdminDashboard";
 
 function App() {
   return (
@@ -17,7 +18,14 @@ function App() {
       <Routes>
         {/* 🔓 דף התחברות */}
         <Route path="/" element={<Login />} />
-
+        <Route
+          path="/admin"
+          element={
+            <PrivateRoute>
+              <AdminDashboard />
+            </PrivateRoute>
+          }
+/>
         {/* 🧑‍💼 מגייסים */}
         <Route
           path="/recruiter"

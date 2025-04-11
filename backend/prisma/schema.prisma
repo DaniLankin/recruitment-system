@@ -18,7 +18,7 @@ model User {
   name         String
   email        String        @unique
   password     String
-  role         String
+  role         String   // candidate | recruiter | admin
   createdAt    DateTime      @default(now())
 
   // אם הוא מגייס - פרסם משרות

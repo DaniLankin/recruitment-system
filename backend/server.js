@@ -7,6 +7,9 @@ const jobRoutes = require("./routes/jobRoutes");
 const candidateRoutes = require("./routes/candidateRoutes");
 const applicationRoutes = require("./routes/applicationRoutes");
 const recruiterRoutes = require("./routes/recruiterRoutes");
+const adminRoutes = require("./routes/adminRoutes");
+
+
 const path = require("path");
 
 const app = express();
@@ -20,6 +23,7 @@ app.use("/api", applicationRoutes);
 app.use("/api/recruiter", recruiterRoutes);
 // סטטי – כדי שתוכל לגשת לקבצים מהדפדפן
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
+app.use("/api", adminRoutes);
 
 
 app.get("/", (req, res) => {
