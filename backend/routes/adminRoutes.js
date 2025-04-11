@@ -55,7 +55,27 @@ router.get("/admin/users", authMiddleware, requireAdmin, async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 });
-
+// 🔄 עדכון תפקיד של משתמש
+router.put("/admin/users/:id/role", authMiddleware, requireAdmin, async (req, res) => {
+    try {
+      const userId = parseInt(req.params.id);
+      const { role } = req.body;
+  
+      if (!["candidate", "recruiter"].includes(role)) {
+        return res.status(400).json({ error: "תפקיד לא חוקי" });
+      }
+  
+      const updatedUser = await prisma.user.update({
+        where: { id: userId },
+        data: { role },
+      });
+  
+      res.json(updatedUser);
+    } catch (error) {
+      res.status(500).json({ error: error.message });
+    }
+  });
+  
 // 🗑️ מחיקת משתמש (למנהל בלבד)
 router.delete("/admin/users/:id", authMiddleware, requireAdmin, async (req, res) => {
   try {

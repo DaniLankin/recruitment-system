@@ -51,13 +51,39 @@ function AdminDashboard() {
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || "שגיאה במחיקת המשתמש");
 
-      // הסרת המשתמש מה־state
       setUsers((prev) => prev.filter((u) => u.id !== userId));
       alert("המשתמש נמחק בהצלחה ✅");
     } catch (err) {
       alert("שגיאה: " + err.message);
     }
   };
+
+  const handleRoleChange = async (userId, newRole) => {
+    const token = localStorage.getItem("token");
+  
+    try {
+      const res = await fetch(`http://localhost:5000/api/admin/users/${userId}/role`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ role: newRole }),
+      });
+  
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || "שגיאה בעדכון תפקיד");
+  
+      setUsers((prev) =>
+        prev.map((u) => (u.id === userId ? { ...u, role: newRole } : u))
+      );
+  
+      alert("התפקיד עודכן בהצלחה ✅");
+    } catch (err) {
+      alert("שגיאה: " + err.message);
+    }
+  };
+  
 
   return (
     <>
@@ -100,7 +126,20 @@ function AdminDashboard() {
                 <tr key={user.id} className="border-t">
                   <td className="p-2">{user.name || "—"}</td>
                   <td className="p-2">{user.email}</td>
-                  <td className="p-2">{user.role}</td>
+                  <td className="p-2">
+                    {user.role === "admin" ? (
+                      "admin"
+                    ) : (
+                      <select
+                        value={user.role}
+                        onChange={(e) => handleRoleChange(user.id, e.target.value)}
+                        className="border p-1 rounded"
+                      >
+                        <option value="candidate">מועמד</option>
+                        <option value="recruiter">מגייס</option>
+                      </select>
+                    )}
+                  </td>
                   <td className="p-2">
                     {user.role !== "admin" && (
                       <button
