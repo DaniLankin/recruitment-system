@@ -69,7 +69,12 @@ function Login() {
         />
 
         {error && <div className="text-red-500 text-sm mb-3">{error}</div>}
-
+        <p className="text-sm mt-4 text-center">
+        עדיין אין לך חשבון?{" "}
+        <a href="/register" className="text-blue-600 underline hover:text-blue-800">
+          הרשמה
+        </a>
+        </p>
         <button
           type="submit"
           className="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700"
@@ -77,6 +82,7 @@ function Login() {
           התחבר
         </button>
       </form>
+      
     </div>
   );
 }

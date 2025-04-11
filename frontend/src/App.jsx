@@ -11,6 +11,7 @@ import JobApplications from "./pages/JobApplications";
 import EditJob from "./pages/EditJob";
 import AddJob from "./pages/AddJob";
 import AdminDashboard from "./pages/AdminDashboard";
+import Register from "./pages/Register";
 
 function App() {
   return (
@@ -18,6 +19,7 @@ function App() {
       <Routes>
         {/* 🔓 דף התחברות */}
         <Route path="/" element={<Login />} />
+        <Route path="/register" element={<Register />} />
         <Route
           path="/admin"
           element={
