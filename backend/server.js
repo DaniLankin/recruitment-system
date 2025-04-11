@@ -35,7 +35,7 @@ app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
 
 // רק לצורך בדיקות! למחוק אחרי הרצה!
 const prisma = require("./config/db");
-
+/*
 app.get("/run-seed", async (req, res) => {
   try {
     const { main } = require("./prisma/seed");
@@ -46,6 +46,6 @@ app.get("/run-seed", async (req, res) => {
     res.status(500).send("❌ Error running seed");
   }
 });
-
+*/
 
 // "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjIsImVtYWlsIjoiamFuZUBleGFtcGxlLmNvbSIsImlhdCI6MTc0MjU0NTE3MiwiZXhwIjoxNzQyNTQ4NzcyfQ.vP3ihIXYs935ipP4FMQpmdnukLtssJVsUltquJiUUSQ"
