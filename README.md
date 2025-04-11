@@ -1,65 +1,97 @@
-//recruiter@example.com	recruiter123
-//candidate@example.com	candidate123
-# 📦 Recruitment System – מערכת ניהול גיוס והשמה
+# 📌 Recruitment System - Fullstack App
 
-מערכת Full Stack מלאה שפותחה לצורך ניהול תהליכי גיוס והשמה בין מגייסים למועמדים.  
-כוללת מנגנוני הרשאות, פרסום משרות, הגשת מועמדות, סטטוסים, חיפוש חכם, סטטיסטיקות, וממשק משתמש מודרני.
-
----
-
-## 🚀 מבנה הפרויקט
-
-- `backend/` – שרת Express עם REST API, בסיס נתונים PostgreSQL, הרשאות JWT ו־Prisma ORM
-- `frontend/` – אפליקציית React עם Tailwind CSS, חיבור ל־API, ניהול טוקן, ניווט מבוסס תפקיד
-
----
-
-## ✨ תכונות קיימות
-
-### 👥 Authentication
-- הרשמה והתחברות
-- תפקידים: מגייס / מועמד
-- שמירה של טוקן JWT ב־localStorage
-
-### 🧑‍💼 מגייסים
-- פרסום משרות חדשות
-- צפייה בהגשות למשרות שפורסמו
-- שינוי סטטוס של מועמדות (pending / accepted / rejected)
-- קבלת סטטיסטיקה לפי סטטוסי הגשה
-
-### 👨‍💻 מועמדים
-- צפייה ברשימת משרות
-- חיפוש לפי מילות מפתח (כותרת, תיאור, מיקום, חברה)
-- הגשת מועמדות למשרה
-- מניעת הגשה כפולה
-- צפייה ברשימת ההגשות שלו
+מערכת גיוס עובדים הכוללת ממשקים למגייסים, מועמדים ומנהל מערכת. פותחה ב־React (Frontend), Express ו־Prisma (Backend), עם מסד נתונים PostgreSQL.
 
 ---
 
 ## 🧰 טכנולוגיות
 
-### 🔧 Backend
-- Node.js + Express.js
-- PostgreSQL
-- Prisma ORM
-- JWT + Bcrypt
-- dotenv + nodemon
-
-### 🎨 Frontend
-- React (Vite)
-- Tailwind CSS
-- React Router
-- Axios
-- Zustand או Context לניהול מצב
-- localStorage לשמירת טוקן
+- 🔹 **Frontend:** React 19, TailwindCSS, Vite  
+- 🔹 **Backend:** Node.js, Express, Prisma, JWT  
+- 🔹 **Database:** PostgreSQL  
+- 🔹 **Authentication:** JSON Web Token (JWT)
 
 ---
 
-## 🛠️ הפעלת המערכת
+## ✨ תכונות עיקריות
 
-### 1. Clone & התקנת השרת
+- 🧑‍💼 מגייסים:
+  - פרסום משרות
+  - ניהול מועמדויות
+  - צפייה בדשבורד עם סטטיסטיקות
+
+- 👨‍💻 מועמדים:
+  - הרשמה והתחברות
+  - הצגת משרות עם חיפוש
+  - שליחת קורות חיים בפורמט PDF בלבד
+  - צפייה במועמדויות
+
+- 👑 מנהל מערכת:
+  - צפייה בכל המשתמשים
+  - מחיקת משתמשים
+  - שינוי תפקידים
+  - סטטיסטיקות מערכת
+
+---
+
+## 🖼️ צילומי מסך
+
+#### 🔐 התחברות:
+![login](./screenshots/login.png)
+
+#### 🏠 דשבורד מועמד:
+![candidate](./screenshots/candidate_dashboard.png)
+
+#### 📄 משרות:
+![jobs](./screenshots/job_list.png)
+
+#### 📥 הגשת מועמדות:
+![apply](./screenshots/apply.png)
+
+#### 📊 דשבורד מגייס:
+![recruiter](./screenshots/recruiter_dashboard.png)
+
+#### 👑 דשבורד מנהל:
+![admin](./screenshots/admin_dashboard.png)
+
+---
+
+## ▶️ דמו אינטראקטיבי
+
+![](./screenshots/demo.gif)
+
+---
+
+## ⚙️ התקנה מקומית
 
 ```bash
-git clone https://github.com/DaniLankin/recruitment-system.git
-cd recruitment-system/backend
+# 1. התקנת התלויות
 npm install
+
+# 2. יצירת קובץ .env
+cp .env.example .env
+
+# 3. הרצת מסד הנתונים (PostgreSQL) והרצת Prisma
+npx prisma migrate dev --name init
+
+# 4. הפעלת השרת
+npm run dev
+```
+
+---
+
+## 👤 משתמשים לדוגמה
+
+| תפקיד      | אימייל                  | סיסמה          |
+|------------|--------------------------|----------------|
+| Admin      | admin@example.com        | admin123       |
+| Recruiter  | recruiter@example.com    | recruiter123   |
+| Candidate  | candidate@example.com    | candidate123   |
+
+---
+
+## 📄 הערות
+
+- התמיכה ברספונסיביות מלאה
+- כל הבקשות לשרת מאובטחות עם JWT
+- הקוד ממודול ומסודר לפי תפקידים
