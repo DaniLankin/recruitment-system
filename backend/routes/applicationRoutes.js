@@ -6,32 +6,32 @@ const requireCandidate = require("../middleware/requireCandidate");
 
 const router = express.Router();
 
-// 📥 הגשת מועמדות למשרה (עם קובץ קו״ח PDF)
+// Cloudinary
 const multer = require("multer");
-const path = require("path");
+const { v2: cloudinary } = require("cloudinary");
+const { CloudinaryStorage } = require("multer-storage-cloudinary");
 
-// הגדרת אחסון לקבצים
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    cb(null, "uploads/resumes");
-  },
-  filename: (req, file, cb) => {
-    const uniqueName = `${Date.now()}-${file.originalname}`;
-    cb(null, uniqueName);
+// הגדרת Cloudinary
+cloudinary.config({
+  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+  api_key: process.env.CLOUDINARY_API_KEY,
+  api_secret: process.env.CLOUDINARY_API_SECRET,
+});
+
+// אחסון ב־Cloudinary רק לקבצי PDF
+const storage = new CloudinaryStorage({
+  cloudinary,
+  params: {
+    folder: "resumes",
+    allowed_formats: ["pdf"],
+    resource_type: "raw", // חשוב עבור קבצים שאינם תמונות
+    public_id: (req, file) => `${Date.now()}-${file.originalname}`,
   },
 });
 
-// סינון רק PDF
-const fileFilter = (req, file, cb) => {
-  if (file.mimetype === "application/pdf") {
-    cb(null, true);
-  } else {
-    cb(new Error("קובץ חייב להיות PDF"), false);
-  }
-};
+const upload = multer({ storage });
 
-const upload = multer({ storage, fileFilter });
-
+// 📥 הגשת מועמדות עם קובץ קו״ח PDF
 router.post(
   "/applications",
   authMiddleware,
@@ -57,7 +57,7 @@ router.post(
           jobId: parseInt(jobId),
           candidateId: req.user.userId,
           status: "pending",
-          resume: req.file.filename,
+          resume: req.file.path, // קישור ל־Cloudinary
         },
       });
 
