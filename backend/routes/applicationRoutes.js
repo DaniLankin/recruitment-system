@@ -24,7 +24,8 @@ const storage = new CloudinaryStorage({
   params: {
     folder: "resumes",
     allowed_formats: ["pdf"],
-    resource_type: "raw", // חשוב עבור קבצים שאינם תמונות
+    resource_type: "raw", // קבצים שאינם תמונות
+    disposition: "attachment", // ⬅️ בקשה להוריד את הקובץ במקום להציג אותו
     public_id: (req, file) => `${Date.now()}-${file.originalname}`,
   },
 });

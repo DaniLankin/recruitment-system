@@ -129,9 +129,10 @@ function JobApplications() {
                     <strong>:קורות חיים</strong>{" "}
                     <a
                       href={app.resume.replace("/upload/", "/upload/fl_attachment/")}
+                      download
                       className="text-blue-600 underline"
                     >
-                      הורד קובץ
+                      download
                     </a>
                   </p>
                 )}
