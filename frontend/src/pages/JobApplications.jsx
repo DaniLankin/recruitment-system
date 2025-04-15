@@ -126,12 +126,10 @@ function JobApplications() {
                 <p><strong>אימייל:</strong> {app.candidate?.email}</p>
                 {app.resume && (
                   <p>
-                    <strong>קורות חיים:</strong>{" "}
+                    <strong>:קורות חיים</strong>{" "}
                     <a
-                      //href={`${import.meta.env.VITE_API_URL}/uploads/${app.resume}`} 
                       href={app.resume}
-                      target="_blank"
-                      rel="noopener noreferrer"
+                      download
                       className="text-blue-600 underline"
                     >
                       צפייה
