@@ -126,10 +126,9 @@ function JobApplications() {
                 <p><strong>אימייל:</strong> {app.candidate?.email}</p>
                 {app.resume && (
                   <p>
-                    <strong>:קורות חיים</strong>{" "}
+                    <strong>קורות חיים:</strong>{" "}
                     <a
                       href={app.resume.replace("/upload/", "/upload/fl_attachment/")}
-                      download
                       className="text-blue-600 underline"
                     >
                       download
