@@ -13,6 +13,23 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+model LeadCandidate {
+  id           Int      @id @default(autoincrement())
+  firstName    String
+  lastName     String
+  email        String?  @unique
+  phone        String?
+  desiredRole  String?
+  gender       String?  // "זכר", "נקבה", "אחר"
+  age          Int?
+  experience   Int?     // שנות ניסיון
+  notes        String?
+  resume       String?  // 🔗 קישור לקובץ קורות חיים (Cloudinary למשל)
+  createdAt    DateTime @default(now())
+}
+
+
+
 model User {
   id           Int           @id @default(autoincrement())
   name         String
