@@ -128,10 +128,12 @@ function JobApplications() {
                   <p>
                     <strong>קורות חיים:</strong>{" "}
                     <a
-                      href={app.resume.replace("/upload/", "/upload/fl_attachment/")}
+                      href={app.resume}
+                      target="_blank"
+                      rel="noopener noreferrer"
                       className="text-blue-600 underline"
                     >
-                      download
+                      צפייה בקובץ
                     </a>
                   </p>
                 )}
