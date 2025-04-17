@@ -1,50 +1,35 @@
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
+import { useAuth } from "../context/AuthContext";
 
 function Navbar() {
-  const navigate = useNavigate();
-  const user = JSON.parse(localStorage.getItem("user"));
-  const role = user?.role;
-
-  const handleLogout = () => {
-    localStorage.removeItem("token");
-    localStorage.removeItem("user");
-    navigate("/");
-  };
-
-  const dashboardPath =
-    role === "candidate" ? "/candidate" :
-    role === "recruiter" ? "/recruiter" :
-    "/";
+  const { user, logout } = useAuth();
 
   return (
-    <nav className="bg-blue-600 text-white px-6 py-3">
-      <div className="flex flex-wrap justify-between items-center">
-        <div className="flex items-center flex-wrap gap-x-3 rtl:space-x-reverse">
-          {[
-            { to: dashboardPath, label: "🏠 מסך ראשי" },
-            ...(role === "candidate"
-              ? [
-                  { to: "/jobs", label: "משרות" },
-                  { to: "/my-applications", label: "ההגשות שלי" },
-                ]
-              : role === "recruiter"
-              ? [{ to: "/my-jobs", label: "המשרות שלי" }]
-              : []),
-          ].map((link, idx) => (
-            <Link
-              key={idx}
-              to={link.to}
-              className="px-3 py-1 bg-white text-blue-600 rounded hover:bg-blue-100 transition whitespace-nowrap"
-            >
-              {link.label}
-            </Link>
-          ))}
-        </div>
+    <nav className="bg-blue-700 text-white p-4 flex justify-between items-center flex-wrap">
+      <div className="text-xl font-bold mb-2 md:mb-0">מערכת השמה</div>
 
-        <button
-          onClick={handleLogout}
-          className="bg-red-500 hover:bg-red-600 px-3 py-1 rounded text-sm mt-2 sm:mt-0"
-        >
+      <div className="flex gap-4 flex-wrap items-center">
+        {user?.role === "recruiter" && (
+          <>
+            <Link to="/dashboard" className="hover:underline">דשבורד</Link>
+            <Link to="/my-jobs" className="hover:underline">המשרות שלי</Link>
+            <Link to="/add-job" className="hover:underline">הוסף משרה</Link>
+            <Link to="/add-lead" className="hover:underline">➕ הוסף מועמד</Link>
+          </>
+        )}
+
+        {user?.role === "candidate" && (
+          <>
+            <Link to="/jobs" className="hover:underline">משרות</Link>
+            <Link to="/my-applications" className="hover:underline">הגשות שלי</Link>
+          </>
+        )}
+
+        {user?.role === "admin" && (
+          <Link to="/admin" className="hover:underline">ניהול</Link>
+        )}
+
+        <button onClick={logout} className="bg-red-600 hover:bg-red-700 px-3 py-1 rounded">
           התנתק
         </button>
       </div>

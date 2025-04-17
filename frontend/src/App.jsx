@@ -12,6 +12,8 @@ import EditJob from "./pages/EditJob";
 import AddJob from "./pages/AddJob";
 import AdminDashboard from "./pages/AdminDashboard";
 import Register from "./pages/Register";
+import AddLeadCandidate from "./pages/AddLeadCandidate";
+import RecruiterRoute from "./components/RecruiterRoute";
 
 function App() {
   return (
@@ -35,6 +37,14 @@ function App() {
             <PrivateRoute allowedRoles={["recruiter"]}>
               <RecruiterDashboard />
             </PrivateRoute>
+          }
+        />
+        <Route
+          path="/add-lead-candidate"
+          element={
+            <RecruiterRoute>
+              <AddLeadCandidate />
+            </RecruiterRoute>
           }
         />
         <Route

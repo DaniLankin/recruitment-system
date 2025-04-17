@@ -24,7 +24,7 @@ app.use("/api/recruiter", recruiterRoutes);
 // סטטי – כדי שתוכל לגשת לקבצים מהדפדפן
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 app.use("/api", adminRoutes);
-
+app.use("/api", require("./routes/leadCandidateRoutes"));
 
 app.get("/", (req, res) => {
   res.send("Recruitment System API is running...");
