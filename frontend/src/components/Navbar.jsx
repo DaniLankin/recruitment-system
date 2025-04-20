@@ -15,6 +15,8 @@ function Navbar() {
             <Link to="/my-jobs" className="hover:underline">המשרות שלי</Link>
             <Link to="/add-job" className="hover:underline">הוסף משרה</Link>
             <Link to="/add-lead-candidate" className="hover:underline">➕ הוסף מועמד</Link>
+            console.log("User from Navbar:", user);
+
           </>
         )}
 
